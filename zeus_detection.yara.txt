@@ -1,0 +1,30 @@
+rule Zeus_Detector
+{
+    meta:
+        description = "Detects Zeus malware artifacts"
+        author = "Your Name"
+        date = "2024-12-18"
+        malware_family = "Zeus"
+        references = ["https://www.malwarebytes.com/zeus", "https://www.cisecurity.org/zeus"]
+
+    strings:
+        // Common strings associated with Zeus malware
+        $zeus_string = "Zeus" nocase
+        $zbot_string = "Zbot" nocase
+        $zeus_downloader = "ZeusDownloader" nocase
+
+        // Example of a byte pattern found in Zeus binaries (this will need to be tailored to specific Zeus variants)
+        $file_pattern = { 6A 40 68 00 00 00 00 50 }
+
+        // Example of an API function that Zeus may use
+        $api_call = "GetProcAddress" nocase
+
+        // Example: Regex pattern to match IP addresses that Zeus may communicate with
+        $network_connection = /([0-9]{1,3}\.){3}[0-9]{1,3}/
+
+    condition:
+        any of ($zeus_string, $zbot_string, $zeus_downloader) or
+        $file_pattern or
+        $api_call or
+        $network_connection
+}

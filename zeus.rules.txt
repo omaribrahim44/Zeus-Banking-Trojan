@@ -1,0 +1,18 @@
+alert ip any any -> any any (msg:"Zeus C2 Communication"; flow:to_server,established; content:"POST"; http_uri; content:"/admin"; classtype:trojan-activity;)
+
+alert top any any any any (msg:"Zeus Trojan C2 Traffic"; content:"zeus"; nocase; sid:1000001; rev:1;)
+
+alert udp $HOME_NET any -> 239.255.255.250 1900 (msg:"Zero Access Zeus Banking Trojan - SSDP M-SEARCH flood"; 
+    flow:to_server,established; 
+    content:"M-SEARCH * HTTP/1.1"; 
+    http_header; 
+    content:"HOST: 239.255.255.250:1900"; 
+    http_header; 
+    content:"MAN: \"ssdp:discover\""; 
+    http_header; 
+    content:"ST: urn:dial-multiscreen-org:service:dial:1"; 
+    http_header; 
+    threshold:type both, track by_src, count 5, seconds 10; 
+    sid:1000001; 
+    severity:2; 
+)
